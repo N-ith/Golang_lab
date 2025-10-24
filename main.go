@@ -1,106 +1,237 @@
 package main
 
 import (
+	"bufio"
+	"encoding/base64"
+	"encoding/hex"
 	"fmt"
+	"os"
 )
 
-func main () {
-	lab1()
-	lab2()
-	lab3()
+func main() {
+	// lab1()
+	// line()
+	// lab2()
+	// line()
+	// lab3()
+	// line()
+	// lab4()
+	// line()
+	// lab5()
+	// line()
+	lab6()
+	line()
 }
 
-func line () {
-
-	for i:=0; i<30; i++ {
+func line() {
+	for i := 0; i < 30; i++ {
 		print("-")
 	}
 	print("\n")
 
 }
 
-func lab1 () {
-// Task 1: Write a Go program to demonstrate the use of assignment operators. 
-// The program should take two integer inputs and perform various assignment operations
-// such as =, +=, -=, *=, /=, and %=. Display the result after each operation.
+//------------------------------------------------- Lab 1
+
+func lab1() {
 	fmt.Println("Lab1: ")
-	
+
 	var number int = 10
-	
-	number+=1
+
+	number += 1
 	fmt.Println(". 10+1=", number)
 
-	number-=1
+	number -= 1
 	fmt.Println(". 10-1=", number)
 
-	number*=2
+	number *= 2
 	fmt.Println(". 10*2=", number)
-	
-	number/=2
+
+	number /= 2
 	fmt.Println(". 10/2=", number)
 
-	number%=2
+	number %= 2
 	fmt.Println(". 10%2=", number)
-	line()
 }
 
+//------------------------------------------------- Lab 2
+
 func lab2() {
-// 	• Write a Go program to demonstrate the use of logical
-// operators such as &&, ||, and !.
-// • The program should take two integer inputs and evaluate
-// logical expressions like:
-// • both positive (&&)
-// • one greater than the other (||)
-// • not equal (!)
-
-// Display whether each condition is true or false.
-
 	fmt.Println("Lab 2:")
 
 	var num1 int
 	var num2 int
 	var boolean bool
 
-	print("Integer value for state1: ")
+	print("Integer value for num1: ")
 	fmt.Scanln(&num1)
-	print("Integer value for state2: ")
+	print("Integer value for num2: ")
 	fmt.Scanln(&num2)
 
+	fmt.Printf("num1: %v, num2: %v \n", num1, num2)
 
-	fmt.Printf("state1: %v, state2: %v \n", num1, num2)
+	boolean = (num1 > 0) && (num2 > 0)
+	println("num1&&num2:", and(num1, num2))
 
-	boolean = (num1>0)&&(num2>0)
-	println("state1&&state2", and(num1, num2))
+	boolean = (num1 > 0) || (num2 > 0)
+	println("num1||num2:", boolean)
 
-	boolean = (num1>0)||(num2>0)
-	println("state1||state2", boolean)
-	
-	boolean = (num1>0)!=(num2>0)
-	println("state1!=state2", boolean)
-	line()
+	boolean = (num1 > 0) != (num2 > 0)
+	println("num1!=num2:", boolean)
 }
 
-func and (num1, num2 int) bool {
-	return (num1>0) && (num2>0)
+func and(num1, num2 int) bool {
+	return (num1 > 0) && (num2 > 0)
 }
 
+//------------------------------------------------- Lab 3
 
-func lab3 () {
-// 	• Write a Go program to demonstrate the use of bitwise and
-// assignment operators. The program should perform AND, OR, XOR,
-// NOT, left shift, and right shift operations on two integers using
-// functions and display the results. Also, show the effect of
-// assignment operators on variable values.
-// • Pseudocode:
-// main() {
-// myXor(a,b)
-// myNOT(a,b)
-// myOR(a,b)
-// myAND(a,b)
-// }
+func lab3() {
 
+	println("Lab3: ")
+	var num1 int = 2
+	var num2 int = 3
 
-
+	fmt.Printf("num1: %v, num2: %v \n", num1, num2)
+	fmt.Println("myXOR:", myXOR(num1, num2))
+	fmt.Println("myOR:", myOR(num1, num2))
+	fmt.Println("myAND:", myAND(num1, num2))
+	fmt.Println("myNOT:", myNOT(num1))
+	fmt.Println("leftShift:", leftShift(num1, num2))
+	fmt.Println("rightShift:", rightShift(num1, num2))
 
 }
 
+func myXOR(a, b int) int { return a ^ b }
+
+func myOR(a, b int) int { return a | b }
+
+func myAND(a, b int) int { return a & b }
+
+func myNOT(a int) int { return ^a }
+
+func leftShift(a, b int) int { return a << b }
+
+func rightShift(a, b int) int { return a >> b }
+
+// ------------------------------------------------- Lab 4
+func lab4() {
+	print("Lab4: \n")
+	for {
+		var choice int
+		var a, b float32
+
+		print("======== MIni Calculator ========\n")
+		print("1) Add  2) Sub  3) Mul  4) Div  5) Mod  6) Exit\n")
+		print("Choose: ")
+		fmt.Scanln(&choice)
+
+		if choice == 6 {
+			print("Exiting...\n")
+			break
+		}
+
+		print("Enter a: ")
+		fmt.Scanln(&a)
+		print("Enter b: ")
+		fmt.Scanln(&b)
+
+		switch choice {
+		case 1:
+			fmt.Printf("Result for %v+%v=%v\n", a, b, add(a, b))
+		case 2:
+			fmt.Printf("Result for %v-%v=%v\n", a, b, sub(a, b))
+		case 3:
+			fmt.Printf("Result for %vx%v=%v\n", a, b, multiply(a, b))
+		case 4:
+			if b != 0 {
+				fmt.Printf("Result for %v/%v=%v\n", a, b, division(a, b))
+			} else {
+				fmt.Println("b cannot be 0")
+			}
+		case 5:
+			var Ia, Ib int = int(a), int(b)
+			if b != 0 {
+				fmt.Printf("Result for %v%%%v=%v\n", a, b, remainder(Ia, Ib))
+			} else {
+				fmt.Println("b cannot be 0")
+			}
+		default:
+			fmt.Printf("Invalid choice")
+		}
+	}
+}
+
+func add(a, b float32) float32 { return a + b }
+
+func sub(a, b float32) float32 { return a - b }
+
+func multiply(a, b float32) float32 { return a * b }
+
+func division(a, b float32) float32 { return a / b }
+
+func remainder(a, b int) int { return a % b }
+
+//------------------------------------------------- Lab 5
+
+func lab5() {
+
+	print("Lab4: \n")
+
+	print("Enter a string to start encoding: ")
+
+	// use simple scanln or scanf or scan won't handle space
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	mes := scanner.Text()
+
+	// Define plain text data to byte
+	Bmes := []byte(mes)
+
+	fmt.Printf("Binary: %08b\n", Bmes)
+	fmt.Println("Hexadecimal:", hex.EncodeToString(Bmes))
+	fmt.Println("Base64:", base64.StdEncoding.EncodeToString(Bmes))
+}
+
+func lab6() {
+
+	println("Lab6:")
+
+	print("Enter a string to encrypt: ")
+
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	plainText := scanner.Text()
+
+	print("Enter a key to start the encryption: ")
+	var key byte
+	fmt.Scanln(&key)
+
+	encrypt := xorEncryption(plainText, key)
+	println("Encrypted:", encrypt)
+
+	de_encrypt, err := base64.StdEncoding.DecodeString(encrypt)
+	if err != nil {
+		print("error:", err)
+		return
+	}
+
+	decrypt := xorEncryption(string(de_encrypt), key)
+	de_decrypt, err := base64.StdEncoding.DecodeString(decrypt)
+	if err != nil {
+		fmt.Print("Decrypt error: ", err, "\n")
+		return
+	}
+
+	fmt.Println("Decrypted", string(de_decrypt))
+}
+
+func xorEncryption(pText string, key byte) string {
+
+	cipher := []byte(pText)
+	for i := 0; i < len(pText); i++ {
+		cipher[i] = pText[i] ^ key
+	}
+
+	return base64.StdEncoding.EncodeToString(cipher)
+}
