@@ -9,16 +9,16 @@ import (
 )
 
 func main() {
-	// lab1()
-	// line()
-	// lab2()
-	// line()
-	// lab3()
-	// line()
-	// lab4()
-	// line()
-	// lab5()
-	// line()
+	lab1()
+	line()
+	lab2()
+	line()
+	lab3()
+	line()
+	lab4()
+	line()
+	lab5()
+	line()
 	lab6()
 	line()
 }
@@ -119,7 +119,6 @@ func lab4() {
 	print("Lab4: \n")
 	for {
 		var choice int
-		var a, b float32
 
 		print("======== MIni Calculator ========\n")
 		print("1) Add  2) Sub  3) Mul  4) Div  5) Mod  6) Exit\n")
@@ -131,11 +130,8 @@ func lab4() {
 			break
 		}
 
-		print("Enter a: ")
-		fmt.Scanln(&a)
-		print("Enter b: ")
-		fmt.Scanln(&b)
-
+		a, b , _:= inp_handle()
+		
 		switch choice {
 		case 1:
 			fmt.Printf("Result for %v+%v=%v\n", a, b, add(a, b))
@@ -157,18 +153,39 @@ func lab4() {
 				fmt.Println("b cannot be 0")
 			}
 		default:
-			fmt.Printf("Invalid choice")
+			fmt.Printf("Invalid choice\n")
 		}
 	}
 }
 
-func add(a, b float32) float32 { return a + b }
+func inp_handle () (float64,float64, error){
+// Check for input
+	var a, b float64
+	fmt.Print("Enter value for a: ")
+	_, err := fmt.Scanln(&a)
 
-func sub(a, b float32) float32 { return a - b }
+	if err != nil {
+		fmt.Println("a must be integer or float number!")
+		return 0,0,err
+	}
 
-func multiply(a, b float32) float32 { return a * b }
+	fmt.Print("Enter value for b: ")
+	_, err = fmt.Scanln(&b)
 
-func division(a, b float32) float32 { return a / b }
+	if err != nil {
+		fmt.Println("b must be integer or float number!")
+		return 0,0,err
+	}
+	return a, b, nil
+}
+
+func add(a, b float64) float64 { return a + b }
+
+func sub(a, b float64) float64 { return a - b }
+
+func multiply(a, b float64) float64 { return a * b }
+
+func division(a, b float64) float64 { return a / b }
 
 func remainder(a, b int) int { return a % b }
 
@@ -193,45 +210,37 @@ func lab5() {
 	fmt.Println("Base64:", base64.StdEncoding.EncodeToString(Bmes))
 }
 
-func lab6() {
+//------------------------------------------------- Lab 6
 
+func lab6() {
 	println("Lab6:")
 
 	print("Enter a string to encrypt: ")
-
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	plainText := scanner.Text()
 
-	print("Enter a key to start the encryption: ")
-	var key byte
+	var key []byte
+	print("Enter a key: ")
 	fmt.Scanln(&key)
-
+	
 	encrypt := xorEncryption(plainText, key)
-	println("Encrypted:", encrypt)
+	fmt.Printf("Starting XOR encryption with key: %v <=> %v \n",key, base64.StdEncoding.EncodeToString([]byte(string(key))))
+	
+	// print the encryption as base64 for unprintable character support
+	fmt.Print("Encrypted: ", base64.StdEncoding.EncodeToString([]byte(encrypt)), "\n")
 
-	de_encrypt, err := base64.StdEncoding.DecodeString(encrypt)
-	if err != nil {
-		print("error:", err)
-		return
-	}
-
-	decrypt := xorEncryption(string(de_encrypt), key)
-	de_decrypt, err := base64.StdEncoding.DecodeString(decrypt)
-	if err != nil {
-		fmt.Print("Decrypt error: ", err, "\n")
-		return
-	}
-
-	fmt.Println("Decrypted", string(de_decrypt))
+	decrypt := xorEncryption(encrypt, key)
+	fmt.Println("Decrypted", string(decrypt))
 }
 
-func xorEncryption(pText string, key byte) string {
+func xorEncryption(pText string, key []byte) string {
 
-	cipher := []byte(pText)
-	for i := 0; i < len(pText); i++ {
-		cipher[i] = pText[i] ^ key
+	cipher := make([]byte, len(pText))
+
+	for i := range pText {
+		cipher[i] = pText[i] ^ key[i % len(key)]
 	}
 
-	return base64.StdEncoding.EncodeToString(cipher)
+	return string(cipher)
 }
